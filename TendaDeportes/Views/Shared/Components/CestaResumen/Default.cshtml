@@ -1,0 +1,17 @@
+@model Cesta
+
+<div class="">
+    @if (Model?.Lineas.Count() > 0)
+    {
+        <small class="navbar-text">
+            <b>A tua cesta:</b>
+            @Model?.Lineas.Sum(x=>x.Cantidade) elemento/s
+            @Model?.ComputeValorTotal().ToString("c")
+        </small>
+    }
+    <a class="btn btn-sm btn-secondary navbar-btn" asp-page="/Cesta"
+        asp-route-returnurl="@ViewContext.HttpContext.Request.PathAndQuery()">
+        <i class="fa fa-shopping-cart"></i>
+
+    </a>
+</div>

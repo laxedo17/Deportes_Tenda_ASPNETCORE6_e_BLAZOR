@@ -1,0 +1,51 @@
+@page
+@model CestaModel
+
+<h2>Tua cesta</h2>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Cantidade</th>
+            <th>Producto</th>
+            <th class="text-right">Precio</th>
+            <th class="text-right">Subtotal</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var line in Model?.Cesta?.Lineas ?? Enumerable.Empty<CestaLinea>())
+        {
+            <tr>
+                <td class="text-center">@line.Cantidade</td>
+                <td class="text-left">@line.Producto.Nome</td>
+                <td class="text-right">@line.Producto.Precio.ToString("c")</td>
+                <td class="text-right">
+                    @((line.Cantidade * line.Producto.Precio).ToString("c"))
+                </td>
+                <td class="text-center">
+                    <form asp-page-handler="Remove" method="post">
+                        <input type="hidden" name="ProductoID" value="@line.Producto.ProductoID" />
+                        <input type="hidden" name="returnUrl" value="@Model?.ReturnUrl" />
+                        <button type="submit" class="btn btn-sm btn-danger">
+                            Eliminar
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3" class="text-right">Total:</td>
+            <td class="text-right">
+                @Model?.Cesta?.ComputeValorTotal().ToString("c")
+            </td>
+        </tr>
+    </tfoot>
+</table>
+<div class="text-center">
+    <a class="btn btn-primary" href="@Model?.ReturnUrl">Continuar comprando</a>
+    <a class="btn btn-primary" asp-action="Pagamento" asp-controller="Pedido">
+        Pagamento
+    </a>
+</div>

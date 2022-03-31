@@ -1,0 +1,36 @@
+@page "/admin/pedidos"
+@inherits OwningComponentBase<IPedidoRepository>
+
+<PedidoTable TableTitle="Pedidos sen Entregar" Pedidos="UnshippedOrders" ButtonLabel="Ship"
+    PedidoSelected="ShipOrder" />
+<PedidoTable TableTitle="Pedidos Entregados" Pedidos="ShippedOrders" ButtonLabel="Reset" PedidoSelected="ResetOrder" />
+<button class="btn btn-info" @onclick="@(e => UpdateData())">Refrescar datos</button>
+@code {
+    public IPedidoRepository Repository => Service;
+    public IEnumerable<Pedido> AllOrders { get; set; } = Enumerable.Empty<Pedido>();
+    public IEnumerable<Pedido> UnshippedOrders { get; set; }
+    = Enumerable.Empty<Pedido>();
+    public IEnumerable<Pedido> ShippedOrders { get; set; }
+    = Enumerable.Empty<Pedido>();
+    protected async override Task OnInitializedAsync()
+    {
+        await UpdateData();
+    }
+    public async Task UpdateData()
+    {
+        AllOrders = await Repository.Pedidos.ToListAsync();
+        UnshippedOrders = AllOrders.Where(o => !o.Despachado);
+        ShippedOrders = AllOrders.Where(o => o.Despachado);
+    }
+    public void ShipOrder(int id) => UpdateOrder(id, true);
+    public void ResetOrder(int id) => UpdateOrder(id, false);
+    private void UpdateOrder(int id, bool shipValue)
+    {
+        Pedido? o = Repository.Pedidos.FirstOrDefault(o => o.PedidoID == id);
+        if (o != null)
+        {
+            o.Despachado = shipValue;
+            Repository.SavePedido(o);
+        }
+    }
+}

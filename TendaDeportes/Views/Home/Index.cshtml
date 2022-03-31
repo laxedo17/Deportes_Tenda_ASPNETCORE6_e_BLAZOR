@@ -1,0 +1,9 @@
+@model ProductosListaViewModel
+
+@foreach (var prod in Model?.Productos ?? Enumerable.Empty<Producto>())
+{
+    <partial name="ProductoResumen" model="prod" />
+}
+<div page-model="@Model?.PaxinacionInfo" page-action="Index" page-classes-enabled="true" page-class="btn"
+    page-class-normal="btn-outline-dark" page-class-selected="btn-primary" page-url-category="@Model?.CategoriaActual!"
+    btn-group pull-right m-1"></div>
